@@ -1,0 +1,25 @@
+{
+  "name": "subgamejs",
+  "version": "1.0.0",
+  "description": "A game about subs",
+  "main": "index.js",
+  "dependencies": {
+    "craftyjs": "^0.7.1"
+  },
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sleepy-Fish/SubGameJS.git"
+  },
+  "author": "J Riley Harrington <jrileyharrington@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Sleepy-Fish/SubGameJS/issues"
+  },
+  "homepage": "https://github.com/Sleepy-Fish/SubGameJS#readme"
+}
