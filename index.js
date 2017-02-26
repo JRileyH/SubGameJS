@@ -62,7 +62,7 @@ debug_ShipFramer.grid(shiplayout1);
 debug_ShipFramer.frame(shiplayout1);
 
 debug_ShipFramer.grid(shiplayout2);
-debug_ShipFramer.frame(shiplayout2);
+debug_ShipFramer.frame(shiplayout2, ["floors"]);
 
 
 var audio =  {
