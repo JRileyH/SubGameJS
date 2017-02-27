@@ -1,4 +1,4 @@
-var g_ship = Crafty.s("Ship")
+/*var g_ship = Crafty.s("Ship")
     .addArmament([
         {x:0, y:0},
         {x:10, y:50},
@@ -8,7 +8,7 @@ var g_ship = Crafty.s("Ship")
     ]).addRoster([
         {station:0},
         {station:2},
-    ]);
+    ]);*/
 
 var shiplayout1 = {
     x:200,
@@ -17,11 +17,11 @@ var shiplayout1 = {
     h:4,
     tw:50,
     th:40,
-    floors:[
-        {l:1,r:3},
-        {l:2,r:6},
-        {l:1,r:5},
-        {l:2,r:4}
+    decks:[
+        {l:1,r:3, d:0},
+        {l:2,r:6, d:1},
+        {l:1,r:5, d:2},
+        {l:2,r:4, d:3}
     ],
     ladders:[
         [2.5],
@@ -36,7 +36,7 @@ var shiplayout1 = {
         {x:2.1,y:4}
     ]
 }
-var shiplayout2 = {
+/*var shiplayout2 = {
     x:250,
     y:200,
     w:7,
@@ -56,13 +56,19 @@ var shiplayout2 = {
     ],
     armament:[
     ]
+}*/
+
+var g_ship = Crafty.s("Ship").build(shiplayout1);
+
+function test(){
+    console.log(g_ship)
 }
 
-debug_ShipFramer.grid(shiplayout1);
+/*debug_ShipFramer.grid(shiplayout1);
 debug_ShipFramer.frame(shiplayout1);
 
 debug_ShipFramer.grid(shiplayout2);
-debug_ShipFramer.frame(shiplayout2, ["floors"]);
+debug_ShipFramer.frame(shiplayout2, ["floors"]);*/
 
 
 var audio =  {

@@ -15,13 +15,13 @@ Crafty.c("FloorDragger", {
             this.color("green");
         },
         "Dragging":function(e){
-            console.log(this.other);
             if((this.side === "left" && e.realX < this.other) || (this.side === "right" && e.realX > this.other.x)){
                 this.x = e.realX;
             }
             
         },
         "StopDrag":function(e){
+            
             this.color("red");
         }
     },
