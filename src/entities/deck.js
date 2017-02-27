@@ -3,7 +3,6 @@ Crafty.c("Deck", {
     required: "2D, DOM, Color",
     init: function() {
         this.h = 1;
-        this.w = 10;
         this.color("magenta");
     },
     events: {
@@ -55,16 +54,17 @@ Crafty.c("DeckSlider", {
             this.color("green");
         },
         "Dragging":function(e) {
-
-            if(this.side==="LEFT" && e.realX>(this.other.x-this.deck.layout.tw)) return;
-            if(this.side==="RIGHT" && e.realX<(this.other.x+this.deck.layout.tw)) return;
-            this.x = e.realX-3
+            var lo = this.deck.layout;
+            if(this.side==="LEFT" && e.realX>(this.other.x-lo.tw)) return;
+            if(this.side==="RIGHT" && e.realX<(this.other.x+lo.tw)) return;
+            this.x = Crafty.math.clamp(e.realX, lo.x, lo.x+(lo.w*lo.tw))-3;
         },
         "StopDrag":function(e) {
             this.color("red");
-            approx = Math.round((e.realX-this.deck.layout.x)/this.deck.layout.tw*10)/10;
-            if(this.side==="LEFT" && e.realX>(this.other.x-this.deck.layout.tw)) approx = this.deck.r-1;
-            if(this.side==="RIGHT" && e.realX<(this.other.x+this.deck.layout.tw)) approx = this.deck.l+1;
+            var lo = this.deck.layout;
+            approx = Crafty.math.clamp(Math.round((e.realX-lo.x)/lo.tw*10)/10, 0, lo.w);
+            if(this.side==="LEFT" && e.realX>(this.other.x-lo.tw)) approx = this.deck.r-1;
+            if(this.side==="RIGHT" && e.realX<(this.other.x+lo.tw)) approx = this.deck.l+1;
             switch(this.side) {
                 case "LEFT":
                     this.deck.position({l:approx});

@@ -4,7 +4,8 @@ Crafty.s("Ship", {
         this.layout = null;
         this.roster = [];
         this.decks = [];
-        this.armament = [];
+        this.hatches = [];
+        this.stations = [];
     },
     events: {
 
@@ -13,16 +14,27 @@ Crafty.s("Ship", {
         this.layout = layout;
         return this
             .buildGrid(layout)
-            .buildDecks(layout);
+            .buildDecks(layout)
+            .buildHatches(layout);
     },
     buildGrid: function(layout) {
-
+        Crafty.s("Grid").build(layout, true);
         return this;
     },
     buildDecks: function(layout) {
         for(var i in layout.decks) {
             var deckInfo = layout.decks[i];
             this.decks.push(Crafty.e("Deck").attr({layout: layout}).position(deckInfo));
+        }
+        return this;
+    },
+    buildHatches: function(layout) {
+        for(var i in layout.hatches) {
+            var hatchInfo = layout.hatches[i];
+            for(var j in hatchInfo.h){
+                this.hatches.push(Crafty.e("Hatch").attr({layout: layout}).position({d:hatchInfo.d, x:hatchInfo.h[j]}));
+            }
+            
         }
         return this;
     }
