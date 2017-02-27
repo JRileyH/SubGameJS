@@ -10,7 +10,7 @@ var g_ship = Crafty.s("Ship")
         {station:2},
     ]);
 
-var shiplayout = {
+var shiplayout1 = {
     x:200,
     y:10,
     w:7,
@@ -36,8 +36,33 @@ var shiplayout = {
         {x:2.1,y:4}
     ]
 }
+var shiplayout2 = {
+    x:250,
+    y:200,
+    w:7,
+    h:4,
+    tw:50,
+    th:40,
+    floors:[
+        {l:1,r:3},
+        {l:2,r:6},
+        {l:1,r:5},
+        {l:2,r:4}
+    ],
+    ladders:[
+        [2.5],
+        [3, 4.5],
+        [3.5]
+    ],
+    armament:[
+    ]
+}
 
-debug_ShipFramer.frame(shiplayout);
+debug_ShipFramer.grid(shiplayout1);
+debug_ShipFramer.frame(shiplayout1);
+
+debug_ShipFramer.grid(shiplayout2);
+debug_ShipFramer.frame(shiplayout2);
 
 
 var audio =  {

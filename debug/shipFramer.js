@@ -34,7 +34,7 @@ var debug_ShipFramer = (function(){
                     .attr({
                         x: layout.x+Math.floor(ladder*layout.tw),
                         y: layout.y+(i+1)*layout.th,
-                        w: 1,
+                        w: 10,
                         h: layout.th
                     })
                     .debugStroke("purple")
@@ -67,6 +67,27 @@ var debug_ShipFramer = (function(){
         }
         for(var i in wireArmament){
             wireArmament[i].debugRectangle(wireArmament[i]);
+        }
+    }
+
+    _debug.grid = function(layout) {
+        var grid = [];
+        for(var i = 0; i < layout.w; i++){
+            for(var j = 0; j < layout.h; j++){
+                grid.push(
+                    Crafty.e("2D, DebugRectangle")
+                    .attr({
+                        x: layout.x+i*layout.tw,
+                        y: layout.y+j*layout.th,
+                        w: layout.tw,
+                        h: layout.th
+                    })
+                    .debugStroke("#ddd")
+                );
+            }
+        }
+        for(var i in grid){
+            grid[i].debugRectangle(grid[i]);
         }
     }
 
