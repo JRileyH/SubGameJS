@@ -1,127 +1,45 @@
-var msg = Crafty.e('2D, DOM, Text')
-    .attr({
-        x: 10,
-        y:10
-    })
+var g_ship = Crafty.s("Ship")
+    .addArmament([
+        {x:0, y:0},
+        {x:10, y:50},
+        {x:30, y:100},
+        {x:60, y:150},
+        {x:100, y:200},
+    ]).addRoster([
+        {station:0},
+        {station:2},
+    ]);
 
-Crafty.c("Mover", {
-    required: "2D, DOM, Color, Mouse, Keyboard",
-    init: function() {
-        this.w = 10;
-        this.h = 10;
-        this.selected = false;
-        this.originColor = "black";
-    },
-    events:{
-        "KeyDown":function(e) {
-            var action = false;
-            if(this.selected){
-                switch(e.key){
-                    case Crafty.keys[1]:
-                        this.x = 0;
-                        action = true;
-                    break;
-                    case Crafty.keys[2]:
-                        this.x = 100;
-                        action = true;
-                    break;
-                    case Crafty.keys[3]:
-                        this.x = 200;
-                        action = true;
-                    break;
-                    case Crafty.keys[4]:
-                        this.x = 300;
-                        action = true;
-                    break;
-                    case Crafty.keys[5]:
-                        this.x = 400;
-                        action = true;
-                    break;
-                    case Crafty.keys[6]:
-                        this.x = 500;
-                        action = true;
-                    break;
-                    default:
-                        Crafty.audio.play("berp");
-                    break;
-                }
-                if(action) {
-                    Crafty.audio.play("meep");
-                    this.deselect()
-                }
-            }
-        },
-        "Click":function(e){
-            Crafty.audio.play("beep");
-            Crafty("Mover").each(function(){
-                this.deselect()
-            });
-            this.select();
-        }
-    },
-    select: function() {
-        this.selected = true;
-        this.color("green");
-    },
-    deselect: function() {
-        this.selected = false;
-        this.color(this.originColor);
-    },
-    place: function(x, y, c){
-        this.x = x*100;
-        this.y = y;
-        this.originColor = c;
-        this.color(c);
-        return this;
-    }
-});
+var shiplayout = {
+    x:200,
+    y:10,
+    w:7,
+    h:4,
+    tw:50,
+    th:40,
+    floors:[
+        {l:1,r:3},
+        {l:2,r:6},
+        {l:1,r:5},
+        {l:2,r:4}
+    ],
+    ladders:[
+        [2.5],
+        [3, 4.5],
+        [3.5]
+    ],
+    armament:[
+        {x:1.1,y:1},
+        {x:3.3,y:2},
+        {x:4.8,y:2},
+        {x:1.5,y:3},
+        {x:2.1,y:4}
+    ]
+}
 
-var m1 = Crafty.e("Mover").place(0, 100, 'purple');
-var m2 = Crafty.e("Mover").place(1, 120, 'magenta');
-var m3 = Crafty.e("Mover").place(2, 140, 'blue');
-var m4 = Crafty.e("Mover").place(3, 160, 'red');
+debug_ShipFramer.frame(shiplayout);
 
-Crafty.c("Player", {
-    required: "2D, DOM, Color",
-    init: function() {
-        this.w = 30;
-        this.h = 30;
-        this.color("green");
-    },
-    remove: function() {
-        Craft.log("removed");
-    },
-    events:{
-        "TurnRed": function(){this.changeColor("red")},
-        "TurnGreen": function(){this.changeColor("green")},
-        "TurnBlue": function(){this.changeColor("blue")}
-    },
-    changeColor: function(c){
-        this.color(c);
-    },
-    place: function(x, y) {
-        this.x = x;
-        this.y = y;
-        return this;
-    }
-});
 
-var p1 = Crafty.e("Player")
-    .place(100, 50);
-
-var p2 = Crafty.e("Player")
-    .place(200, 40);
-
-Crafty.trigger("TurnBlue");
-p2.trigger("TurnRed");
-
-p2.origin("center");
-p2.bind('EnterFrame', function(){
-    this.rotation+=1;
-    
-});
-
-msg.text("Hello World");
 var audio =  {
         "beep": ["beep.wav", "beep.mp3"],
         "meep": ["meep.wav", "meep.mp3"],
