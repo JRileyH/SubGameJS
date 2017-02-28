@@ -8,6 +8,7 @@ Crafty.c("Hatch", {
     events: {
         "StartDrag":function(e) {
             this.color("green");
+            this._oldX = this.x;
         },
         "Dragging":function(e) {
             var lo = this.layout;
@@ -19,6 +20,11 @@ Crafty.c("Hatch", {
         },
         "StopDrag":function(e) {
             this.color("purple");
+            var lo = this.layout;
+            for(var i in lo.hatches[this.deck].h) {
+                //do something about overlapping here
+                console.log();
+            }
         }
     },
     position: function(info) {
