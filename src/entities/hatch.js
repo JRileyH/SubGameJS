@@ -2,13 +2,11 @@
 Crafty.c("Hatch", {
     required: "2D, DOM, Color, MouseDrag",
     init: function() {
-        this.w = 10;
         this.color("purple");
     },
     events: {
         "StartDrag":function(e) {
             this.color("green");
-            this._oldX = this.x;
         },
         "Dragging":function(e) {
             var lo = this.layout;
@@ -21,16 +19,32 @@ Crafty.c("Hatch", {
         "StopDrag":function(e) {
             this.color("purple");
             var lo = this.layout;
-            for(var i in lo.hatches[this.deck].h) {
-                //do something about overlapping here
-                console.log();
+            var approx = Math.round((this.x-lo.x)/lo.tw*10)/10;
+            this.x = lo.x+(approx*lo.tw);
+            var dropped = this;
+
+            function clear() {
+                var c = true;
+                Crafty("Hatch").each(function(i){
+                    if(dropped.getId()!==this.getId()){
+                        if(dropped.intersect(this)){
+                            c =  false;
+                        }
+                    }
+                });
+                return c;
+            }
+
+            while(!clear()){
+                approx+=0.1;
+                this.x = lo.x+(approx*lo.tw);
+                var dropped = this;
             }
         }
     },
     position: function(info) {
         if(typeof(info)!=="object") return {d:this.deck, x:this.l}
-
-        this.h = this.layout.th;
+        
         if(info.hasOwnProperty("d")) {
             this.deck = Math.floor(info.d);
             this.y = this.layout.y+((Math.floor(info.d)+1)*this.layout.th);

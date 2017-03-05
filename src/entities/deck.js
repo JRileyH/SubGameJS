@@ -13,20 +13,20 @@ Crafty.c("Deck", {
 
         if(info.hasOwnProperty("d")) {
             this.deck = Math.floor(info.d);
-            this.y = this.layout.y+((Math.floor(info.d)+1)*this.layout.th);
+            this.y = this.layout.y+((this.deck+1)*this.layout.th);
         }
         if(info.hasOwnProperty("l")) {
             this.l = info.l;
             this.x = this.layout.x+(info.l*this.layout.tw);
             this.w = (this.layout.x+(this.r*this.layout.tw)) - this.x;
             if(this.leftSlider)this.leftSlider.destroy();
-            this.leftSlider = Crafty.e("DeckSlider").assign(this, "left");
+            this.leftSlider = Crafty.e("DeckSlider").deck(this, "left").position(info.l);
         }
         if(info.hasOwnProperty("r")) {
             this.r = info.r;
             this.w = (this.layout.x+(info.r*this.layout.tw)) - this.x;
             if(this.rightSlider)this.rightSlider.destroy();
-            this.rightSlider = Crafty.e("DeckSlider").assign(this, "right");
+            this.rightSlider = Crafty.e("DeckSlider").deck(this, "right").position(info.r);
         }
         this.leftSlider.pair(this.rightSlider);
         this.rightSlider.pair(this.leftSlider);
@@ -42,9 +42,9 @@ Crafty.c("Deck", {
 Crafty.c("DeckSlider", {
     required: "2D, DOM, Color, MouseDrag",
     init: function() {
-        this.deck = null;
-        this.other = null;
-        this.side = "";
+        this._deck = null;
+        this._other = null;
+        this._side = "";
         this.h = 6;
         this.w = 6;
         this.color("red");
@@ -54,51 +54,70 @@ Crafty.c("DeckSlider", {
             this.color("green");
         },
         "Dragging":function(e) {
-            var lo = this.deck.layout;
-            if(this.side==="LEFT" && e.realX>(this.other.x-lo.tw)) return;
-            if(this.side==="RIGHT" && e.realX<(this.other.x+lo.tw)) return;
-            this.x = Crafty.math.clamp(e.realX, lo.x, lo.x+(lo.w*lo.tw))-3;
+            var lo = this._deck.layout;
+            var farLeft = 0;
+            var farRight = lo.w;
+            var topDeck = this._deck.deck-1>=0;
+            var botDeck = this._deck.deck<lo.decks.length-1;
+
+            if(this._side==="RIGHT") {
+                farLeft = Math.max(
+                    farLeft,                                                                                        //right of ships left bounds
+                    topDeck ? g_ship.decks[this._deck.deck-1].leftSlider.position()+1 : Number.MIN_SAFE_INTEGER,    //1 unit right of above decks left side
+                    this._other.position()+1,                                                                        //1 unit right of -this decks left side
+                    botDeck ? g_ship.decks[this._deck.deck+1].leftSlider.position()+1 : Number.MIN_SAFE_INTEGER,    //1 unit right of below decks left side
+                    ...topDeck ? lo.hatches[this._deck.deck-1].h.map(function(i){return i+0.2}) : [],               //right of above decks right most hatch
+                    ...botDeck ? lo.hatches[this._deck.deck].h.map(function(i){return i+0.2}) : []                  //right of -this decks right most hatch
+                )
+            }
+            if(this._side==="LEFT") {
+                farRight = Math.min(
+                    farRight,                                                                                       //left of ships right bounds
+                    topDeck ? g_ship.decks[this._deck.deck-1].rightSlider.position()-1 : Number.MAX_SAFE_INTEGER,   //1 unit left of above decks right side
+                    this._other.position()-1,                                                                        //1 unit left of -this decks right side
+                    botDeck ? g_ship.decks[this._deck.deck+1].rightSlider.position()-1 : Number.MAX_SAFE_INTEGER,   //1 unit left of below decks right side
+                    ...topDeck ? lo.hatches[this._deck.deck-1].h : [],                                              // left of above decks  left most hatch
+                    ...botDeck ? lo.hatches[this._deck.deck].h : []                                                 // left of -this decks  left most hatch
+                )
+            }
+
+            this.x = Crafty.math.clamp(e.realX, lo.x+(farLeft*lo.tw), lo.x+(farRight*lo.tw))-(this.w/2);
         },
         "StopDrag":function(e) {
             this.color("red");
-            var lo = this.deck.layout;
-            approx = Crafty.math.clamp(Math.round((e.realX-lo.x)/lo.tw*10)/10, 0, lo.w);
-            if(this.side==="LEFT" && e.realX>(this.other.x-lo.tw)) approx = this.deck.r-1;
-            if(this.side==="RIGHT" && e.realX<(this.other.x+lo.tw)) approx = this.deck.l+1;
-            switch(this.side) {
+            var lo = this._deck.layout;
+            this.position((this.x-lo.x+(this.w/2))/lo.tw);
+            switch(this._side) {
                 case "LEFT":
-                    this.deck.position({l:approx});
+                    this._deck.position({l:this.position()});
                 break;
                 case "RIGHT":
-                    this.deck.position({r:approx});
+                    this._deck.position({r:this.position()});
                 break;
             }
         }
     },
-    assign: function(deck, side) {
-        if(typeof(deck)!=="object") return this.deck;
+    position: function(p) {
+        if(typeof(p)!=="number") return this.p;
 
-        switch(side.toUpperCase()){
-            case "LEFT":
-                this.side = "LEFT";
-                this.x = deck.layout.x+(deck.l*deck.layout.tw)-3;
-                this.y = deck.layout.y+((deck.deck+1)*deck.layout.th)-3;
-            break;
-            case "RIGHT":
-                this.side = "RIGHT";
-                this.x = deck.layout.x+(deck.r*deck.layout.tw)-3;
-                this.y = deck.layout.y+((deck.deck+1)*deck.layout.th)-3;
-            break;
-            default:
-            return console.error("DeckSliderError: Improper assignment, used 'left' or 'right' in second parameter")
-        }
-        this.deck = deck;
+        var lo = this._deck.layout;
+        var approx = Math.round(p*10)/10;
+        this.p = approx;
+        this.x = lo.x+(approx*lo.tw)-(this.w/2);
+        return this;
+    },
+    deck: function(deck, side) {
+        if(typeof(deck)!=="object") return this._deck;
+
+        this._deck = deck;
+        this._side = side.toUpperCase();
+        this.y = deck.layout.y+((deck.deck+1)*deck.layout.th)-(this.w/2);
         return this;
     },
     pair: function(other){
-        if(typeof(other)!=="object") return this.other;
+        if(typeof(other)!=="object") return this._other;
 
-        this.other = other;
+        this._other = other;
         return this;
     }
 });

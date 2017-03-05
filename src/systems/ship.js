@@ -32,7 +32,7 @@ Crafty.s("Ship", {
         for(var i in layout.hatches) {
             var hatchInfo = layout.hatches[i];
             for(var j in hatchInfo.h){
-                this.hatches.push(Crafty.e("Hatch").attr({layout: layout}).position({d:hatchInfo.d, x:hatchInfo.h[j]}));
+                this.hatches.push(Crafty.e("Hatch").attr({layout: layout, w: Math.floor(layout.tw*0.2), h: layout.th}).position({d:hatchInfo.d, x:hatchInfo.h[j]}));
             }
             
         }
